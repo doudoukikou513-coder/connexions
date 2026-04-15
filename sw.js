@@ -1,5 +1,11 @@
-const CACHE = 'connexions-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'connexions-v2';
+const ASSETS = [
+  '/connexions/',
+  '/connexions/index.html',
+  '/connexions/manifest.json',
+  '/connexions/icons/icon-192.png',
+  '/connexions/icons/icon-512.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
