@@ -25,7 +25,6 @@
       --wifi-color: #4ade9a;
       --data-color: #60a5fa;
       --bt-color: #a78bfa;
-      --on-glow: 0 0 24px currentColor;
     }
 
     html, body {
@@ -46,20 +45,17 @@
       position: relative;
     }
 
-    /* Ambient background blobs */
     .blob {
       position: fixed;
       border-radius: 50%;
       filter: blur(80px);
       opacity: 0.12;
       pointer-events: none;
-      transition: opacity 0.8s ease, background 0.6s ease;
     }
     .blob-wifi  { width: 260px; height: 260px; top: -60px; left: -60px; background: var(--wifi-color); }
     .blob-data  { width: 220px; height: 220px; bottom: 20px; right: -40px; background: var(--data-color); }
     .blob-bt    { width: 180px; height: 180px; bottom: 40px; left: 20px; background: var(--bt-color); }
 
-    /* Header */
     header {
       text-align: center;
       margin-bottom: 2.5rem;
@@ -82,7 +78,6 @@
       color: var(--text);
     }
 
-    /* Cards grid */
     .grid {
       display: flex;
       flex-direction: column;
@@ -103,12 +98,11 @@
       cursor: pointer;
       text-decoration: none;
       color: inherit;
-      transition: transform 0.15s ease, border-color 0.3s ease, background 0.3s ease;
+      transition: transform 0.15s ease, border-color 0.3s ease;
       -webkit-tap-highlight-color: transparent;
       position: relative;
       overflow: hidden;
     }
-
     .card::before {
       content: '';
       position: absolute;
@@ -118,8 +112,8 @@
       transition: opacity 0.3s ease;
       border-radius: inherit;
     }
-
     .card:active { transform: scale(0.97); }
+    .card:active::before { opacity: 1; }
 
     .card-left {
       display: flex;
@@ -134,62 +128,32 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: box-shadow 0.4s ease, background 0.3s ease;
+      transition: box-shadow 0.4s ease;
       flex-shrink: 0;
     }
+    .icon-wrap svg { width: 22px; height: 22px; }
 
-    .icon-wrap svg {
-      width: 22px;
-      height: 22px;
-      transition: transform 0.3s ease;
-    }
-
-    .card-info h2 {
-      font-size: 16px;
-      font-weight: 500;
-      letter-spacing: -0.01em;
-    }
-    .card-info p {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+    .card-info h2 { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+    .card-info p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
     .arrow {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
-      transition: border-color 0.3s ease;
     }
     .arrow svg { width: 12px; height: 12px; opacity: 0.5; }
 
-    /* Wi-Fi card */
     .card-wifi { --card-accent: linear-gradient(135deg, rgba(74,222,154,0.08), transparent); }
     .card-wifi .icon-wrap { background: rgba(74,222,154,0.1); color: var(--wifi-color); }
-    .card-wifi:hover .icon-wrap,
-    .card-wifi:focus .icon-wrap { box-shadow: 0 0 20px rgba(74,222,154,0.3); }
 
-    /* Data card */
     .card-data { --card-accent: linear-gradient(135deg, rgba(96,165,250,0.08), transparent); }
     .card-data .icon-wrap { background: rgba(96,165,250,0.1); color: var(--data-color); }
-    .card-data:hover .icon-wrap,
-    .card-data:focus .icon-wrap { box-shadow: 0 0 20px rgba(96,165,250,0.3); }
 
-    /* Bluetooth card */
     .card-bt { --card-accent: linear-gradient(135deg, rgba(167,139,250,0.08), transparent); }
     .card-bt .icon-wrap { background: rgba(167,139,250,0.1); color: var(--bt-color); }
-    .card-bt:hover .icon-wrap,
-    .card-bt:focus .icon-wrap { box-shadow: 0 0 20px rgba(167,139,250,0.3); }
 
-    /* Active state ripple on tap */
-    .card:active::before { opacity: 1; }
-
-    /* Footer */
     footer {
       margin-top: 2rem;
       text-align: center;
@@ -197,6 +161,29 @@
       color: var(--muted);
       letter-spacing: 0.05em;
       z-index: 1;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e1e2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--muted);
+      font-size: 12px;
+      padding: 10px 18px;
+      border-radius: 99px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     /* Install banner */
@@ -209,12 +196,11 @@
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 16px;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       z-index: 100;
-      display: none;
     }
     #install-banner p { font-size: 13px; color: var(--muted); flex: 1; }
     #install-btn {
@@ -242,9 +228,9 @@
 </head>
 <body>
 
-  <div class="blob blob-wifi" id="b-wifi"></div>
-  <div class="blob blob-data" id="b-data"></div>
-  <div class="blob blob-bt" id="b-bt"></div>
+  <div class="blob blob-wifi"></div>
+  <div class="blob blob-data"></div>
+  <div class="blob blob-bt"></div>
 
   <header>
     <h1>Connexions rapides</h1>
@@ -254,7 +240,7 @@
   <div class="grid">
 
     <!-- Wi-Fi -->
-    <a class="card card-wifi" href="intent:#Intent;action=android.settings.WIFI_SETTINGS;end" onclick="openSettings('wifi', event)">
+    <a class="card card-wifi" href="#" onclick="openSettings('wifi', event)">
       <div class="card-left">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -277,7 +263,7 @@
     </a>
 
     <!-- Données mobiles -->
-    <a class="card card-data" href="intent:#Intent;action=android.settings.DATA_ROAMING_SETTINGS;end" onclick="openSettings('data', event)">
+    <a class="card card-data" href="#" onclick="openSettings('data', event)">
       <div class="card-left">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -299,7 +285,7 @@
     </a>
 
     <!-- Bluetooth -->
-    <a class="card card-bt" href="intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end" onclick="openSettings('bt', event)">
+    <a class="card card-bt" href="#" onclick="openSettings('bt', event)">
       <div class="card-left">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -321,6 +307,7 @@
   </div>
 
   <footer>Appuyer pour ouvrir les paramètres Android</footer>
+  <div id="toast"></div>
 
   <div id="install-banner">
     <p>Installer sur l'écran d'accueil ?</p>
@@ -339,17 +326,59 @@
     tick();
     setInterval(tick, 10000);
 
-    // Open settings — tries Android intent, fallback to generic
+    // Intent URIs — fonctionnent dans Chrome Android (navigateur)
+    // Depuis une PWA installée, on utilise intent:// avec le package Android
     const intents = {
-      wifi: 'intent:#Intent;action=android.settings.WIFI_SETTINGS;end',
-      data: 'intent:#Intent;action=android.settings.DATA_ROAMING_SETTINGS;end',
-      bt:   'intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end'
+      wifi: 'intent://settings/wifi#Intent;scheme=android-app;package=com.android.settings;action=android.settings.WIFI_SETTINGS;end',
+      data: 'intent://settings/network#Intent;scheme=android-app;package=com.android.settings;action=android.settings.DATA_ROAMING_SETTINGS;end',
+      bt:   'intent://settings/bluetooth#Intent;scheme=android-app;package=com.android.settings;action=android.settings.BLUETOOTH_SETTINGS;end'
     };
+
+    // Fallback : URIs directes reconnues par certains launchers
+    const fallbacks = {
+      wifi: 'android-app://com.android.settings/settings/wifi',
+      data: 'android-app://com.android.settings/settings/network',
+      bt:   'android-app://com.android.settings/settings/bluetooth'
+    };
+
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
 
     function openSettings(type, e) {
       e.preventDefault();
-      // Try intent URI first (works in most Android browsers)
-      window.location.href = intents[type];
+
+      // Tentative 1 : intent:// URI
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      let launched = false;
+
+      // On écoute si la page perd le focus (signe que l'intent a marché)
+      const onBlur = () => { launched = true; };
+      window.addEventListener('blur', onBlur, { once: true });
+
+      iframe.src = intents[type];
+
+      setTimeout(() => {
+        window.removeEventListener('blur', onBlur);
+        document.body.removeChild(iframe);
+
+        if (!launched) {
+          // Tentative 2 : window.location direct
+          window.location.href = intents[type];
+          setTimeout(() => {
+            showToast('Ouvre les Paramètres Android → ' +
+              (type === 'wifi' ? 'Wi-Fi' : type === 'data' ? 'Réseau mobile' : 'Bluetooth'));
+          }, 800);
+        }
+      }, 500);
     }
 
     // PWA install prompt
@@ -363,7 +392,7 @@
     document.getElementById('install-btn').onclick = async () => {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
+        await deferredPrompt.userChoice;
         deferredPrompt = null;
         document.getElementById('install-banner').style.display = 'none';
       }
