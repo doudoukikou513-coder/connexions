@@ -15,219 +15,66 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #0a0a0f;
-      --surface: #13131a;
-      --border: rgba(255,255,255,0.07);
-      --text: #f0f0f5;
+      --bg: #0a0a0f; --surface: #13131a;
+      --border: rgba(255,255,255,0.07); --text: #f0f0f5;
       --muted: rgba(240,240,245,0.4);
-      --wifi-color: #4ade9a;
-      --data-color: #60a5fa;
-      --bt-color: #a78bfa;
+      --wifi-color: #4ade9a; --data-color: #60a5fa; --bt-color: #a78bfa;
     }
-
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      font-family: 'DM Sans', sans-serif;
-      color: var(--text);
-      overflow: hidden;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100dvh;
-      padding: 1.5rem;
-      position: relative;
-    }
-
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      opacity: 0.12;
-      pointer-events: none;
-    }
+    html, body { height: 100%; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); overflow: hidden; }
+    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; padding: 1.5rem; position: relative; }
+    .blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.12; pointer-events: none; }
     .blob-wifi  { width: 260px; height: 260px; top: -60px; left: -60px; background: var(--wifi-color); }
     .blob-data  { width: 220px; height: 220px; bottom: 20px; right: -40px; background: var(--data-color); }
     .blob-bt    { width: 180px; height: 180px; bottom: 40px; left: 20px; background: var(--bt-color); }
-
-    header {
-      text-align: center;
-      margin-bottom: 2.5rem;
-      z-index: 1;
-    }
-    header h1 {
-      font-family: 'Space Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--muted);
-      font-weight: 400;
-    }
-    .time {
-      font-family: 'Space Mono', monospace;
-      font-size: 38px;
-      font-weight: 700;
-      letter-spacing: -1px;
-      margin-top: 6px;
-      color: var(--text);
-    }
-
-    .grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      max-width: 340px;
-      z-index: 1;
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px 22px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-      transition: transform 0.15s ease, border-color 0.3s ease;
-      -webkit-tap-highlight-color: transparent;
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--card-accent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      border-radius: inherit;
-    }
+    header { text-align: center; margin-bottom: 2.5rem; z-index: 1; }
+    header h1 { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); font-weight: 400; }
+    .time { font-family: 'Space Mono', monospace; font-size: 38px; font-weight: 700; letter-spacing: -1px; margin-top: 6px; }
+    .grid { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; z-index: 1; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px 22px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; text-decoration: none; color: inherit; transition: transform 0.15s ease; -webkit-tap-highlight-color: transparent; position: relative; overflow: hidden; }
+    .card::before { content: ''; position: absolute; inset: 0; background: var(--card-accent); opacity: 0; transition: opacity 0.3s ease; }
     .card:active { transform: scale(0.97); }
     .card:active::before { opacity: 1; }
-
-    .card-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: box-shadow 0.4s ease;
-      flex-shrink: 0;
-    }
+    .card-left { display: flex; align-items: center; gap: 16px; }
+    .icon-wrap { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .icon-wrap svg { width: 22px; height: 22px; }
-
-    .card-info h2 { font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+    .card-info h2 { font-size: 16px; font-weight: 500; }
     .card-info p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-    .arrow {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
+    .arrow { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .arrow svg { width: 12px; height: 12px; opacity: 0.5; }
-
     .card-wifi { --card-accent: linear-gradient(135deg, rgba(74,222,154,0.08), transparent); }
     .card-wifi .icon-wrap { background: rgba(74,222,154,0.1); color: var(--wifi-color); }
-
     .card-data { --card-accent: linear-gradient(135deg, rgba(96,165,250,0.08), transparent); }
     .card-data .icon-wrap { background: rgba(96,165,250,0.1); color: var(--data-color); }
-
     .card-bt { --card-accent: linear-gradient(135deg, rgba(167,139,250,0.08), transparent); }
     .card-bt .icon-wrap { background: rgba(167,139,250,0.1); color: var(--bt-color); }
+    footer { margin-top: 2rem; text-align: center; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; z-index: 1; }
 
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: 11px;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      z-index: 1;
-    }
-
-    /* Toast */
-    #toast {
-      position: fixed;
-      bottom: 5rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: #1e1e2e;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: var(--muted);
-      font-size: 12px;
-      padding: 10px 18px;
-      border-radius: 99px;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      pointer-events: none;
-      z-index: 200;
-    }
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+    /* Guide modal */
+    #guide-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); display: none; align-items: flex-end; justify-content: center; z-index: 300; padding: 1rem; }
+    #guide-overlay.open { display: flex; }
+    #guide-sheet { background: #1a1a24; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 28px 24px 32px; width: 100%; max-width: 380px; animation: slideUp 0.3s cubic-bezier(.32,1.2,.5,1); }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    #guide-sheet h3 { font-size: 16px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .steps { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+    .step { display: flex; align-items: flex-start; gap: 14px; }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: center; font-family: 'Space Mono', monospace; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+    .step-text { font-size: 14px; line-height: 1.5; color: rgba(240,240,245,0.75); }
+    .step-text strong { color: var(--text); font-weight: 500; }
+    .guide-actions { display: flex; gap: 10px; }
+    #guide-close { flex: 1; padding: 13px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; }
+    #guide-open-btn { flex: 2; padding: 13px; border-radius: 12px; border: none; color: #000; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
+    #guide-open-btn:active { opacity: 0.8; }
 
     /* Install banner */
-    #install-banner {
-      position: fixed;
-      bottom: 1rem;
-      left: 1rem;
-      right: 1rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 16px;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      z-index: 100;
-    }
+    #install-banner { position: fixed; bottom: 1rem; left: 1rem; right: 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; display: none; align-items: center; gap: 12px; z-index: 100; }
     #install-banner p { font-size: 13px; color: var(--muted); flex: 1; }
-    #install-btn {
-      background: var(--text);
-      color: var(--bg);
-      border: none;
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    #dismiss-btn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 18px;
-      line-height: 1;
-      padding: 4px;
-    }
+    #install-btn { background: var(--text); color: var(--bg); border: none; border-radius: 8px; padding: 7px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+    #dismiss-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; padding: 4px; }
   </style>
 </head>
 <body>
-
   <div class="blob blob-wifi"></div>
   <div class="blob blob-data"></div>
   <div class="blob blob-bt"></div>
@@ -238,76 +85,58 @@
   </header>
 
   <div class="grid">
-
-    <!-- Wi-Fi -->
-    <a class="card card-wifi" href="#" onclick="openSettings('wifi', event)">
+    <a class="card card-wifi" href="#" onclick="openSettings('wifi',event)">
       <div class="card-left">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
-            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
-            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
-            <circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/>
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/>
           </svg>
         </div>
-        <div class="card-info">
-          <h2>Wi-Fi</h2>
-          <p>Paramètres réseau sans fil</p>
-        </div>
+        <div class="card-info"><h2>Wi-Fi</h2><p>Paramètres réseau sans fil</p></div>
       </div>
-      <div class="arrow">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M2.5 6h7M6.5 3l3 3-3 3"/>
-        </svg>
-      </div>
+      <div class="arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6h7M6.5 3l3 3-3 3"/></svg></div>
     </a>
 
-    <!-- Données mobiles -->
-    <a class="card card-data" href="#" onclick="openSettings('data', event)">
+    <a class="card card-data" href="#" onclick="openSettings('data',event)">
       <div class="card-left">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="5" y="2" width="14" height="20" rx="2"/>
-            <path d="M12 18h.01"/>
+            <rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>
             <path d="M8.5 7h7M8.5 11h7M8.5 14.5h4"/>
           </svg>
         </div>
-        <div class="card-info">
-          <h2>Données mobiles</h2>
-          <p>Utilisation et itinérance</p>
-        </div>
+        <div class="card-info"><h2>Données mobiles</h2><p>Utilisation et itinérance</p></div>
       </div>
-      <div class="arrow">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M2.5 6h7M6.5 3l3 3-3 3"/>
-        </svg>
-      </div>
+      <div class="arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6h7M6.5 3l3 3-3 3"/></svg></div>
     </a>
 
-    <!-- Bluetooth -->
-    <a class="card card-bt" href="#" onclick="openSettings('bt', event)">
+    <a class="card card-bt" href="#" onclick="openSettings('bt',event)">
       <div class="card-left">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/>
           </svg>
         </div>
-        <div class="card-info">
-          <h2>Bluetooth</h2>
-          <p>Appareils couplés et visibilité</p>
-        </div>
+        <div class="card-info"><h2>Bluetooth</h2><p>Appareils couplés et visibilité</p></div>
       </div>
-      <div class="arrow">
-        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M2.5 6h7M6.5 3l3 3-3 3"/>
-        </svg>
-      </div>
+      <div class="arrow"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6h7M6.5 3l3 3-3 3"/></svg></div>
     </a>
-
   </div>
 
   <footer>Appuyer pour ouvrir les paramètres Android</footer>
-  <div id="toast"></div>
+
+  <!-- Guide modal -->
+  <div id="guide-overlay" onclick="handleOverlayClick(event)">
+    <div id="guide-sheet">
+      <h3><span class="dot" id="guide-dot"></span><span id="guide-title"></span></h3>
+      <div class="steps" id="guide-steps"></div>
+      <div class="guide-actions">
+        <button id="guide-close" onclick="closeGuide()">Fermer</button>
+        <button id="guide-open-btn" onclick="tryIntent()">Ouvrir</button>
+      </div>
+    </div>
+  </div>
 
   <div id="install-banner">
     <p>Installer sur l'écran d'accueil ?</p>
@@ -316,96 +145,97 @@
   </div>
 
   <script>
-    // Clock
     function tick() {
       const now = new Date();
-      const h = String(now.getHours()).padStart(2,'0');
-      const m = String(now.getMinutes()).padStart(2,'0');
-      document.getElementById('clock').textContent = h + ':' + m;
+      document.getElementById('clock').textContent =
+        String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     }
-    tick();
-    setInterval(tick, 10000);
+    tick(); setInterval(tick, 10000);
 
-    // Intent URIs — fonctionnent dans Chrome Android (navigateur)
-    // Depuis une PWA installée, on utilise intent:// avec le package Android
-    const intents = {
-      wifi: 'intent://settings/wifi#Intent;scheme=android-app;package=com.android.settings;action=android.settings.WIFI_SETTINGS;end',
-      data: 'intent://settings/network#Intent;scheme=android-app;package=com.android.settings;action=android.settings.DATA_ROAMING_SETTINGS;end',
-      bt:   'intent://settings/bluetooth#Intent;scheme=android-app;package=com.android.settings;action=android.settings.BLUETOOTH_SETTINGS;end'
-    };
-
-    // Fallback : URIs directes reconnues par certains launchers
-    const fallbacks = {
-      wifi: 'android-app://com.android.settings/settings/wifi',
-      data: 'android-app://com.android.settings/settings/network',
-      bt:   'android-app://com.android.settings/settings/bluetooth'
-    };
-
-    let toastTimer;
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    function openSettings(type, e) {
-      e.preventDefault();
-
-      // Tentative 1 : intent:// URI
-      const iframe = document.createElement('iframe');
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      let launched = false;
-
-      // On écoute si la page perd le focus (signe que l'intent a marché)
-      const onBlur = () => { launched = true; };
-      window.addEventListener('blur', onBlur, { once: true });
-
-      iframe.src = intents[type];
-
-      setTimeout(() => {
-        window.removeEventListener('blur', onBlur);
-        document.body.removeChild(iframe);
-
-        if (!launched) {
-          // Tentative 2 : window.location direct
-          window.location.href = intents[type];
-          setTimeout(() => {
-            showToast('Ouvre les Paramètres Android → ' +
-              (type === 'wifi' ? 'Wi-Fi' : type === 'data' ? 'Réseau mobile' : 'Bluetooth'));
-          }, 800);
-        }
-      }, 500);
-    }
-
-    // PWA install prompt
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', e => {
-      e.preventDefault();
-      deferredPrompt = e;
-      document.getElementById('install-banner').style.display = 'flex';
-    });
-
-    document.getElementById('install-btn').onclick = async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        document.getElementById('install-banner').style.display = 'none';
+    const cfg = {
+      wifi: {
+        title: 'Wi-Fi', color: '#4ade9a',
+        intent: 'intent:#Intent;action=android.settings.WIFI_SETTINGS;end',
+        steps: [
+          'Tire le panneau de notifications <strong>vers le bas</strong> depuis le haut de l\'écran',
+          'Appuie sur l\'icône <strong>⚙ Paramètres</strong> (roue crantée)',
+          'Va dans <strong>Connexions</strong> puis <strong>Wi-Fi</strong>'
+        ]
+      },
+      data: {
+        title: 'Données mobiles', color: '#60a5fa',
+        intent: 'intent:#Intent;action=android.settings.DATA_ROAMING_SETTINGS;end',
+        steps: [
+          'Tire le panneau de notifications <strong>vers le bas</strong> depuis le haut de l\'écran',
+          'Appuie sur l\'icône <strong>⚙ Paramètres</strong> (roue crantée)',
+          'Va dans <strong>Connexions</strong> puis <strong>Utilisation des données</strong>'
+        ]
+      },
+      bt: {
+        title: 'Bluetooth', color: '#a78bfa',
+        intent: 'intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end',
+        steps: [
+          'Tire le panneau de notifications <strong>vers le bas</strong> depuis le haut de l\'écran',
+          'Appuie sur l\'icône <strong>⚙ Paramètres</strong> (roue crantée)',
+          'Va dans <strong>Connexions</strong> puis <strong>Bluetooth</strong>'
+        ]
       }
     };
 
+    let currentType = null;
+
+    function openSettings(type, e) {
+      e.preventDefault();
+      currentType = type;
+      const c = cfg[type];
+
+      // Tente l'intent Android — marche sur anciens Android ou certains Samsung
+      window.location.href = c.intent;
+
+      // Affiche le guide après 400ms (si l'intent a marché, l'écran aura changé)
+      setTimeout(() => showGuide(type), 400);
+    }
+
+    function showGuide(type) {
+      const c = cfg[type];
+      document.getElementById('guide-dot').style.color = c.color;
+      document.getElementById('guide-title').textContent = c.title;
+      document.getElementById('guide-open-btn').style.background = c.color;
+      document.getElementById('guide-open-btn').textContent = 'Retenter l\'ouverture';
+      document.getElementById('guide-steps').innerHTML = c.steps.map((s, i) => `
+        <div class="step">
+          <div class="step-num">${i + 1}</div>
+          <div class="step-text">${s}</div>
+        </div>`).join('');
+      document.getElementById('guide-overlay').classList.add('open');
+    }
+
+    function tryIntent() {
+      if (currentType) window.location.href = cfg[currentType].intent;
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('guide-overlay')) closeGuide();
+    }
+    function closeGuide() {
+      document.getElementById('guide-overlay').classList.remove('open');
+    }
+
+    // PWA install
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault(); deferredPrompt = e;
+      document.getElementById('install-banner').style.display = 'flex';
+    });
+    document.getElementById('install-btn').onclick = async () => {
+      if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; }
+      document.getElementById('install-banner').style.display = 'none';
+    };
     document.getElementById('dismiss-btn').onclick = () => {
       document.getElementById('install-banner').style.display = 'none';
     };
 
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
   </script>
 </body>
 </html>
