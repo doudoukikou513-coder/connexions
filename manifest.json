@@ -2,7 +2,8 @@
   "name": "Connexions rapides",
   "short_name": "Connexions",
   "description": "Raccourcis Wi-Fi, données mobiles et Bluetooth",
-  "start_url": "/index.html",
+  "start_url": "/connexions/index.html",
+  "scope": "/connexions/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0f",
@@ -12,29 +13,41 @@
       "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
       "name": "Wi-Fi",
-      "url": "/index.html#wifi",
+      "url": "/connexions/index.html#wifi",
       "description": "Paramètres Wi-Fi"
     },
     {
       "name": "Données mobiles",
-      "url": "/index.html#data",
+      "url": "/connexions/index.html#data",
       "description": "Paramètres données mobiles"
     },
     {
       "name": "Bluetooth",
-      "url": "/index.html#bt",
+      "url": "/connexions/index.html#bt",
       "description": "Paramètres Bluetooth"
     }
   ]
