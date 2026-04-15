@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0a0f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Connexions">
+  <title>Connexions</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0f0f5;
+      --muted: rgba(240,240,245,0.4);
+      --wifi-color: #4ade9a;
+      --data-color: #60a5fa;
+      --bt-color: #a78bfa;
+      --on-glow: 0 0 24px currentColor;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    /* Ambient background blobs */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.12;
+      pointer-events: none;
+      transition: opacity 0.8s ease, background 0.6s ease;
+    }
+    .blob-wifi  { width: 260px; height: 260px; top: -60px; left: -60px; background: var(--wifi-color); }
+    .blob-data  { width: 220px; height: 220px; bottom: 20px; right: -40px; background: var(--data-color); }
+    .blob-bt    { width: 180px; height: 180px; bottom: 40px; left: 20px; background: var(--bt-color); }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      z-index: 1;
+    }
+    header h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .time {
+      font-family: 'Space Mono', monospace;
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-top: 6px;
+      color: var(--text);
+    }
+
+    /* Cards grid */
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 340px;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.15s ease, border-color 0.3s ease, background 0.3s ease;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--card-accent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+    }
+
+    .card:active { transform: scale(0.97); }
+
+    .card-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow 0.4s ease, background 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .icon-wrap svg {
+      width: 22px;
+      height: 22px;
+      transition: transform 0.3s ease;
+    }
+
+    .card-info h2 {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+    .card-info p {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .arrow {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.3s ease;
+    }
+    .arrow svg { width: 12px; height: 12px; opacity: 0.5; }
+
+    /* Wi-Fi card */
+    .card-wifi { --card-accent: linear-gradient(135deg, rgba(74,222,154,0.08), transparent); }
+    .card-wifi .icon-wrap { background: rgba(74,222,154,0.1); color: var(--wifi-color); }
+    .card-wifi:hover .icon-wrap,
+    .card-wifi:focus .icon-wrap { box-shadow: 0 0 20px rgba(74,222,154,0.3); }
+
+    /* Data card */
+    .card-data { --card-accent: linear-gradient(135deg, rgba(96,165,250,0.08), transparent); }
+    .card-data .icon-wrap { background: rgba(96,165,250,0.1); color: var(--data-color); }
+    .card-data:hover .icon-wrap,
+    .card-data:focus .icon-wrap { box-shadow: 0 0 20px rgba(96,165,250,0.3); }
+
+    /* Bluetooth card */
+    .card-bt { --card-accent: linear-gradient(135deg, rgba(167,139,250,0.08), transparent); }
+    .card-bt .icon-wrap { background: rgba(167,139,250,0.1); color: var(--bt-color); }
+    .card-bt:hover .icon-wrap,
+    .card-bt:focus .icon-wrap { box-shadow: 0 0 20px rgba(167,139,250,0.3); }
+
+    /* Active state ripple on tap */
+    .card:active::before { opacity: 1; }
+
+    /* Footer */
+    footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      z-index: 1;
+    }
+
+    /* Install banner */
+    #install-banner {
+      position: fixed;
+      bottom: 1rem;
+      left: 1rem;
+      right: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 100;
+      display: none;
+    }
+    #install-banner p { font-size: 13px; color: var(--muted); flex: 1; }
+    #install-btn {
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #dismiss-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="blob blob-wifi" id="b-wifi"></div>
+  <div class="blob blob-data" id="b-data"></div>
+  <div class="blob blob-bt" id="b-bt"></div>
+
+  <header>
+    <h1>Connexions rapides</h1>
+    <div class="time" id="clock">--:--</div>
+  </header>
+
+  <div class="grid">
+
+    <!-- Wi-Fi -->
+    <a class="card card-wifi" href="intent:#Intent;action=android.settings.WIFI_SETTINGS;end" onclick="openSettings('wifi', event)">
+      <div class="card-left">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <h2>Wi-Fi</h2>
+          <p>Paramètres réseau sans fil</p>
+        </div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 6h7M6.5 3l3 3-3 3"/>
+        </svg>
+      </div>
+    </a>
+
+    <!-- Données mobiles -->
+    <a class="card card-data" href="intent:#Intent;action=android.settings.DATA_ROAMING_SETTINGS;end" onclick="openSettings('data', event)">
+      <div class="card-left">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2"/>
+            <path d="M12 18h.01"/>
+            <path d="M8.5 7h7M8.5 11h7M8.5 14.5h4"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <h2>Données mobiles</h2>
+          <p>Utilisation et itinérance</p>
+        </div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 6h7M6.5 3l3 3-3 3"/>
+        </svg>
+      </div>
+    </a>
+
+    <!-- Bluetooth -->
+    <a class="card card-bt" href="intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end" onclick="openSettings('bt', event)">
+      <div class="card-left">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"/>
+          </svg>
+        </div>
+        <div class="card-info">
+          <h2>Bluetooth</h2>
+          <p>Appareils couplés et visibilité</p>
+        </div>
+      </div>
+      <div class="arrow">
+        <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2.5 6h7M6.5 3l3 3-3 3"/>
+        </svg>
+      </div>
+    </a>
+
+  </div>
+
+  <footer>Appuyer pour ouvrir les paramètres Android</footer>
+
+  <div id="install-banner">
+    <p>Installer sur l'écran d'accueil ?</p>
+    <button id="install-btn">Installer</button>
+    <button id="dismiss-btn">✕</button>
+  </div>
+
+  <script>
+    // Clock
+    function tick() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      document.getElementById('clock').textContent = h + ':' + m;
+    }
+    tick();
+    setInterval(tick, 10000);
+
+    // Open settings — tries Android intent, fallback to generic
+    const intents = {
+      wifi: 'intent:#Intent;action=android.settings.WIFI_SETTINGS;end',
+      data: 'intent:#Intent;action=android.settings.DATA_ROAMING_SETTINGS;end',
+      bt:   'intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end'
+    };
+
+    function openSettings(type, e) {
+      e.preventDefault();
+      // Try intent URI first (works in most Android browsers)
+      window.location.href = intents[type];
+    }
+
+    // PWA install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-banner').style.display = 'flex';
+    });
+
+    document.getElementById('install-btn').onclick = async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        document.getElementById('install-banner').style.display = 'none';
+      }
+    };
+
+    document.getElementById('dismiss-btn').onclick = () => {
+      document.getElementById('install-banner').style.display = 'none';
+    };
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
